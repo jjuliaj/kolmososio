@@ -1,10 +1,9 @@
 const express = require('express')
+const cors = require('cors')
 const morgan = require('morgan')
 const app = express()
-const cors = require('cors')
 require('dotenv').config()
 const Person = require('./models/person')
-
 
 app.use(cors())
 app.use(express.static('build'))
@@ -26,7 +25,6 @@ const requestLogger = (request, response, next) => {
     next()
 }
 app.use(requestLogger)
-
 
 const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
@@ -76,7 +74,7 @@ app.post('/api/persons', (request, response, next) => {
             response.json(savedPerson)
         })
         .catch(error => {
-            if (error.code === 1100) {
+            if (error.code === 11000) {
                 return response.status(400).json({
                     error: 'name must be unique'
                 })
@@ -109,11 +107,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
     const { name, number } = request.body
 
-    /*const person = {
-        name: body.name,
-        number: body.number,
-    }*/
-
     Person.findByIdAndUpdate(request.params.id,
         { name, number },
         { new: true, runValidators: true, context: 'query' }
@@ -123,7 +116,6 @@ app.put('/api/persons/:id', (request, response, next) => {
         })
         .catch(error => next(error))
 })
-
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
