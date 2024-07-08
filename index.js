@@ -18,8 +18,6 @@ morgan.token('postdata', function (req, res) {
 })
 app.use(morgan(':method :url :status :response-time ms - :postdata'))
 
-app.use(express.json())
-
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
     console.log('Path:  ', request.path)
